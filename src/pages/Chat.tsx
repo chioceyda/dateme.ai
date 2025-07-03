@@ -1,33 +1,42 @@
-
-import { useState, useEffect, useRef } from 'react';
-import { useSnapshot } from 'valtio';
-import { chatState, Message } from '@/store/chatStore';
-import { ChatBubble } from '@/components/ChatBubble';
-import { TypingDots } from '@/components/TypingDots';
-import { ChatHeader } from '@/components/ChatHeader';
-import { Sidebar } from '@/components/Sidebar';
-import { QuickPrompts } from '@/components/QuickPrompts';
-import { ImageUploader } from '@/components/ImageUploader';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Send, Paperclip } from 'lucide-react';
-import { OpenAIService, MockOpenAIService } from '@/utils/openai';
-import { conversationService } from '@/services/conversationService';
+import { useState, useEffect, useRef } from "react";
+import { useSnapshot } from "valtio";
+import { chatState, Message } from "@/store/chatStore";
+import { ChatBubble } from "@/components/ChatBubble";
+import { TypingDots } from "@/components/TypingDots";
+import { ChatHeader } from "@/components/ChatHeader";
+import { Sidebar } from "@/components/Sidebar";
+import { QuickPrompts } from "@/components/QuickPrompts";
+import { ImageUploader } from "@/components/ImageUploader";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Send, Paperclip } from "lucide-react";
+import { OpenAIService, MockOpenAIService } from "@/utils/openai";
+import { conversationService } from "@/services/conversationService";
 
 const Chat = () => {
   const state = useSnapshot(chatState);
-  const [message, setMessage] = useState('');
-  const [selectedImage, setSelectedImage] = useState<string>('');
+  const [message, setMessage] = useState("");
+  const [selectedImage, setSelectedImage] = useState<string>("");
   const [showImageUploader, setShowImageUploader] = useState(false);
-  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+  const [currentConversationId, setCurrentConversationId] = useState<
+    string | null
+  >(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Use mock service for demo (replace with real API key)
-  const aiService = new MockOpenAIService();
+  // const aiService = new MockOpenAIService();
+  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+  const aiService = new OpenAIService(apiKey);
+
+  if (!apiKey) {
+    console.error(
+      "❌ Missing OpenAI API Key! Please check your .env file and restart the dev server."
+    );
+  }
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -40,60 +49,66 @@ const Chat = () => {
     const newMessage: Message = {
       id: Date.now().toString(),
       text: message,
-      sender: 'user',
+      sender: "user",
       timestamp: new Date(),
       image: selectedImage || undefined,
-      mood: state.userPreferences.mood
+      mood: state.userPreferences.mood,
     };
 
     chatState.messages.push(newMessage);
     chatState.isTyping = true;
-    
+
     // Save message to conversation
     if (currentConversationId) {
       await conversationService.saveMessage(currentConversationId, newMessage);
     } else {
       // Create new conversation
       const conversationId = await conversationService.createConversation(
-        message.slice(0, 50) + (message.length > 50 ? '...' : ''),
+        message.slice(0, 50) + (message.length > 50 ? "..." : ""),
         message
       );
       setCurrentConversationId(conversationId);
     }
-    
-    setMessage('');
-    setSelectedImage('');
+
+    setMessage("");
+    setSelectedImage("");
     setShowImageUploader(false);
 
     try {
       const openAIMessages = [
         {
-          role: 'user' as const,
-          content: selectedImage 
+          role: "user" as const,
+          content: selectedImage
             ? [
-                { type: 'text' as const, text: message || 'What do you think about this image?' },
-                { 
-                  type: 'image_url' as const, 
-                  image_url: { 
-                    url: selectedImage, 
-                    detail: 'auto' as const 
-                  } 
-                }
+                {
+                  type: "text" as const,
+                  text: message || "What do you think about this image?",
+                },
+                {
+                  type: "image_url" as const,
+                  image_url: {
+                    url: selectedImage,
+                    detail: "auto" as const,
+                  },
+                },
               ]
-            : message
-        }
+            : message,
+        },
       ];
 
-      const response = await aiService.sendMessage(openAIMessages, state.userPreferences.mood);
-      
+      const response = await aiService.sendMessage(
+        openAIMessages,
+        state.userPreferences.mood
+      );
+
       chatState.isTyping = false;
-      
+
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: response,
-        sender: 'assistant',
+        sender: "assistant",
         timestamp: new Date(),
-        mood: state.userPreferences.mood
+        mood: state.userPreferences.mood,
       };
 
       chatState.messages.push(aiMessage);
@@ -103,18 +118,19 @@ const Chat = () => {
         await conversationService.saveMessage(currentConversationId, aiMessage);
         await conversationService.updateConversation(
           currentConversationId,
-          chatState.messages[0]?.text.slice(0, 50) + '...' || 'New conversation',
-          response.slice(0, 100) + (response.length > 100 ? '...' : '')
+          chatState.messages[0]?.text.slice(0, 50) + "..." ||
+            "New conversation",
+          response.slice(0, 100) + (response.length > 100 ? "..." : "")
         );
       }
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
       chatState.isTyping = false;
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
@@ -133,25 +149,31 @@ const Chat = () => {
 
   return (
     <div className="flex h-screen bg-gradient-chat dark:bg-gray-900">
-      <Sidebar 
-        isOpen={state.sidebarOpen} 
-        onToggle={() => { chatState.sidebarOpen = !chatState.sidebarOpen; }}
+      <Sidebar
+        isOpen={state.sidebarOpen}
+        onToggle={() => {
+          chatState.sidebarOpen = !chatState.sidebarOpen;
+        }}
         onConversationSelect={handleConversationSelect}
       />
-      
+
       <div className="flex-1 flex flex-col">
         <ChatHeader
           currentMood={state.userPreferences.mood}
-          onMoodChange={(mood) => { chatState.userPreferences.mood = mood; }}
-          onSidebarToggle={() => { chatState.sidebarOpen = !chatState.sidebarOpen; }}
+          onMoodChange={(mood) => {
+            chatState.userPreferences.mood = mood;
+          }}
+          onSidebarToggle={() => {
+            chatState.sidebarOpen = !chatState.sidebarOpen;
+          }}
         />
-        
+
         {/* Chat Messages */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {state.messages.map((msg) => (
             <ChatBubble key={msg.id} message={msg} />
           ))}
-          
+
           {state.isTyping && <TypingDots />}
           <div ref={messagesEndRef} />
         </div>
@@ -161,7 +183,7 @@ const Chat = () => {
           <div className="p-4 border-t border-pink-100 dark:border-gray-700 bg-pink-25 dark:bg-gray-800">
             <ImageUploader
               onImageSelect={setSelectedImage}
-              onImageRemove={() => setSelectedImage('')}
+              onImageRemove={() => setSelectedImage("")}
               selectedImage={selectedImage}
             />
           </div>
@@ -179,7 +201,7 @@ const Chat = () => {
               >
                 <Paperclip className="w-4 h-4" />
               </Button>
-              
+
               <div className="flex-1">
                 <Textarea
                   ref={textareaRef}
@@ -191,7 +213,7 @@ const Chat = () => {
                   rows={1}
                 />
               </div>
-              
+
               <Button
                 onClick={handleSendMessage}
                 disabled={!message.trim() && !selectedImage}
@@ -201,7 +223,7 @@ const Chat = () => {
               </Button>
             </div>
           </div>
-          
+
           <QuickPrompts onPromptSelect={handlePromptSelect} />
         </div>
       </div>
