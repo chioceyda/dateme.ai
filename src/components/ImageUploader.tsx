@@ -1,8 +1,7 @@
-
-import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { ImageIcon, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { ImageIcon, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ImageUploaderProps {
   onImageSelect: (imageDataUrl: string) => void;
@@ -10,12 +9,16 @@ interface ImageUploaderProps {
   selectedImage?: string;
 }
 
-export const ImageUploader = ({ onImageSelect, onImageRemove, selectedImage }: ImageUploaderProps) => {
+export const ImageUploader = ({
+  onImageSelect,
+  onImageRemove,
+  selectedImage,
+}: ImageUploaderProps) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (file: File) => {
-    if (file && file.type.startsWith('image/')) {
+    if (file && file.type.startsWith("image/")) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
@@ -29,7 +32,7 @@ export const ImageUploader = ({ onImageSelect, onImageRemove, selectedImage }: I
     e.preventDefault();
     e.stopPropagation();
     setIsDragOver(false);
-    
+
     const files = Array.from(e.dataTransfer.files);
     if (files.length > 0) {
       handleFileSelect(files[0]);
@@ -52,9 +55,9 @@ export const ImageUploader = ({ onImageSelect, onImageRemove, selectedImage }: I
     <div className="relative">
       {selectedImage ? (
         <div className="relative inline-block">
-          <img 
-            src={selectedImage} 
-            alt="Selected" 
+          <img
+            src={selectedImage}
+            alt="Selected"
             className="w-20 h-20 rounded-lg object-cover border-2 border-pink-200"
           />
           <Button
@@ -70,8 +73,8 @@ export const ImageUploader = ({ onImageSelect, onImageRemove, selectedImage }: I
         <div
           className={cn(
             "border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors",
-            isDragOver 
-              ? "border-pink-400 bg-pink-50" 
+            isDragOver
+              ? "border-pink-400 bg-pink-50"
               : "border-pink-200 hover:border-pink-300 hover:bg-pink-25"
           )}
           onDrop={handleDrop}
@@ -85,7 +88,7 @@ export const ImageUploader = ({ onImageSelect, onImageRemove, selectedImage }: I
           </p>
         </div>
       )}
-      
+
       <input
         ref={fileInputRef}
         type="file"

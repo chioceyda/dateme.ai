@@ -10,7 +10,7 @@ import { ImageUploader } from "@/components/ImageUploader";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send, Paperclip } from "lucide-react";
-import { OpenAIService, MockOpenAIService } from "@/utils/openai";
+import { OpenAIService } from "@/utils/openai";
 import { conversationService } from "@/services/conversationService";
 
 const Chat = () => {
@@ -203,6 +203,9 @@ const Chat = () => {
               </Button>
 
               <div className="flex-1">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <QuickPrompts onPromptSelect={handlePromptSelect} />
+                </div>
                 <Textarea
                   ref={textareaRef}
                   value={message}
@@ -223,8 +226,6 @@ const Chat = () => {
               </Button>
             </div>
           </div>
-
-          <QuickPrompts onPromptSelect={handlePromptSelect} />
         </div>
       </div>
     </div>

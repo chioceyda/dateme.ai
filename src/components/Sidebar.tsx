@@ -1,24 +1,27 @@
-
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { 
-  MessageCircle, 
-  Heart, 
-  Smile, 
-  Calendar, 
-  Settings, 
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  MessageCircle,
+  Heart,
+  Smile,
+  Calendar,
+  Settings,
   X,
   Menu,
   LogOut,
   Sun,
-  Moon
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { useTheme } from 'next-themes';
-import { conversationService, Conversation } from '@/services/conversationService';
-import { useToast } from '@/hooks/use-toast';
+  Moon,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useTheme } from "next-themes";
+import {
+  conversationService,
+  Conversation,
+} from "@/services/conversationService";
+import { useToast } from "@/hooks/use-toast";
+import logoT from "@/assets/Asset 4.png";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -27,15 +30,19 @@ interface SidebarProps {
 }
 
 const menuItems = [
-  { icon: MessageCircle, label: 'Conversations', id: 'conversations' },
-  { icon: Heart, label: 'Love Vault', id: 'love-vault' },
-  { icon: Smile, label: 'Mood Scanner', id: 'mood-scanner' },
-  { icon: Calendar, label: 'Romantic Routine', id: 'routine' },
-  { icon: Settings, label: 'Settings', id: 'settings' },
+  { icon: MessageCircle, label: "Conversations", id: "conversations" },
+  { icon: Heart, label: "Love Vault", id: "love-vault" },
+  { icon: Smile, label: "Mood Scanner", id: "mood-scanner" },
+  { icon: Calendar, label: "Romantic Routine", id: "routine" },
+  { icon: Settings, label: "Settings", id: "settings" },
 ];
 
-export const Sidebar = ({ isOpen, onToggle, onConversationSelect }: SidebarProps) => {
-  const [activeItem, setActiveItem] = useState('conversations');
+export const Sidebar = ({
+  isOpen,
+  onToggle,
+  onConversationSelect,
+}: SidebarProps) => {
+  const [activeItem, setActiveItem] = useState("conversations");
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const { signOut } = useAuth();
   const { theme, setTheme } = useTheme();
@@ -43,7 +50,7 @@ export const Sidebar = ({ isOpen, onToggle, onConversationSelect }: SidebarProps
   const { toast } = useToast();
 
   useEffect(() => {
-    if (activeItem === 'conversations') {
+    if (activeItem === "conversations") {
       loadConversations();
     }
   }, [activeItem]);
@@ -60,7 +67,7 @@ export const Sidebar = ({ isOpen, onToggle, onConversationSelect }: SidebarProps
         title: "Logged out",
         description: "You have been successfully logged out.",
       });
-      navigate('/login');
+      navigate("/login");
     } catch (error) {
       toast({
         title: "Logout failed",
@@ -78,13 +85,18 @@ export const Sidebar = ({ isOpen, onToggle, onConversationSelect }: SidebarProps
     }
   };
 
+  const goToLanding = () => {
+    navigate("/");
+  };
   const renderContent = () => {
     switch (activeItem) {
-      case 'conversations':
+      case "conversations":
         return (
           <div className="space-y-2">
             {conversations.length === 0 ? (
-              <p className="text-sm text-gray-500 dark:text-gray-400 p-3">No conversations yet</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 p-3">
+                No conversations yet
+              </p>
             ) : (
               conversations.map((conversation) => (
                 <button
@@ -95,9 +107,11 @@ export const Sidebar = ({ isOpen, onToggle, onConversationSelect }: SidebarProps
                   <h4 className="font-medium text-sm text-gray-800 dark:text-gray-200 truncate">
                     {conversation.title}
                   </h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
-                    {conversation.preview}
-                  </p>
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
+                      {conversation.preview}
+                    </p>
+                  </div>
                   <p className="text-xs text-gray-400 mt-1">
                     {new Date(conversation.updated_at).toLocaleDateString()}
                   </p>
@@ -106,18 +120,24 @@ export const Sidebar = ({ isOpen, onToggle, onConversationSelect }: SidebarProps
             )}
           </div>
         );
-      case 'settings':
+      case "settings":
         return (
           <div className="space-y-4 p-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Theme</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Theme
+              </span>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                 className="w-10 h-10"
               >
-                {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                {theme === "dark" ? (
+                  <Sun className="w-4 h-4" />
+                ) : (
+                  <Moon className="w-4 h-4" />
+                )}
               </Button>
             </div>
             <Button
@@ -133,8 +153,9 @@ export const Sidebar = ({ isOpen, onToggle, onConversationSelect }: SidebarProps
       default:
         return (
           <div className="p-4">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {menuItems.find(item => item.id === activeItem)?.label} coming soon...
+            <p className="text-sm text-gray-500 dark:text-gray-400 ">
+              {menuItems.find((item) => item.id === activeItem)?.label} coming
+              soon...
             </p>
           </div>
         );
@@ -145,25 +166,36 @@ export const Sidebar = ({ isOpen, onToggle, onConversationSelect }: SidebarProps
     <>
       {/* Mobile backdrop */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-25 z-40 md:hidden"
           onClick={onToggle}
         />
       )}
-      
+
       {/* Sidebar */}
-      <div className={cn(
-        "fixed left-0 top-0 h-full bg-white dark:bg-gray-800 border-r border-pink-100 dark:border-gray-700 shadow-lg z-50 transition-transform duration-300 ease-in-out",
-        "w-80 md:w-72",
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      )}>
+      <div
+        className={cn(
+          "fixed left-0 top-0 h-full bg-white dark:bg-gray-800 border-r border-pink-100 dark:border-gray-700 shadow-lg z-50 transition-transform duration-300 ease-in-out",
+          "w-80 md:w-72",
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        )}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-pink-100 dark:border-gray-700">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-rose-500 rounded-lg flex items-center justify-center">
-              <Heart className="w-4 h-4 text-white" />
+            <div
+              onClick={goToLanding}
+              className="w-20 h-8 flex items-center justify-center"
+            >
+              <img
+                src={logoT}
+                alt="logo"
+                className="w-20 h-8 rounded-lg object-cover"
+              />
             </div>
-            <h2 className="font-semibold text-gray-800 dark:text-white">Dateme.ai</h2>
+            {/* <h2 className="font-semibold text-gray-800 dark:text-white">
+              Dateme.ai
+            </h2> */}
           </div>
           <Button variant="ghost" size="sm" onClick={onToggle}>
             <X className="w-4 h-4" />
@@ -193,14 +225,16 @@ export const Sidebar = ({ isOpen, onToggle, onConversationSelect }: SidebarProps
         </nav>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto">
+        <div className=" flex-1 p-4 max-h-40 overflow-y-auto scrollbar-thin scrollbar-thumb-pink-300 dark:scrollbar-thumb-pink-600">
           {renderContent()}
         </div>
 
         {/* Footer */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-pink-100 dark:border-gray-700">
           <div className="bg-gradient-to-r from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20 rounded-lg p-3">
-            <p className="text-sm text-pink-700 dark:text-pink-300 font-medium">💝 Relationship Tip</p>
+            <p className="text-sm text-pink-700 dark:text-pink-300 font-medium">
+              💝 Relationship Tip
+            </p>
             <p className="text-xs text-pink-600 dark:text-pink-400 mt-1">
               Send a "good morning" text every day to start their day with love!
             </p>

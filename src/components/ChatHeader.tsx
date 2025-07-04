@@ -24,17 +24,13 @@ export const ChatHeader = ({
           variant="ghost"
           size="sm"
           onClick={onSidebarToggle}
-          className="hidden md:flex"
+          className="hidden md:flex dark:bg-gray-600"
         >
           <Menu className="w-4 h-4" />
         </Button>
-
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full flex items-center justify-center">
-            <span className="text-white text-sm font-semibold">AI</span>
-          </div>
           <div>
-            <h3 className="font-semibold text-gray-800">Dating Assistant</h3>
+            <h3 className="font-semibold text-gray-800">Dateme.ai</h3>
             <div className="text-xs text-green-500 flex items-center">
               <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
               Online
@@ -50,7 +46,7 @@ export const ChatHeader = ({
           variant="ghost"
           size="sm"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          className="hidden sm:flex"
+          className="hidden sm:flex dark:bg-gray-600"
         >
           {theme === "dark" ? (
             <Sun className="w-4 h-4" />
