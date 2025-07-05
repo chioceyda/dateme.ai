@@ -169,7 +169,7 @@ const Chat = () => {
         />
 
         {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        <div className="flex-1 flex-col overflow-y-auto p-4 space-y-4 flex-w">
           {state.messages.map((msg) => (
             <ChatBubble key={msg.id} message={msg} />
           ))}
@@ -212,7 +212,9 @@ const Chat = () => {
                   onChange={(e) => setMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Type your message..."
-                  className="resize-none border-pink-200 focus:border-pink-400 focus:ring-pink-400 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  className="resize-none 
+                  border-none focus:ring-0 focus:outline-none bg-transparent
+                  border-pink-200 focus:border-pink-400 focus:ring-pink-400 dark:bg-gray-700  dark:text-white"
                   rows={1}
                 />
               </div>
