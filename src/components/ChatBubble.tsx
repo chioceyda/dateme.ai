@@ -68,7 +68,7 @@ export const ChatBubble = ({ message }: ChatBubbleProps) => {
     >
       <div
         className={cn(
-          "max-w-[80%] break-words rounded-2xl px-4 py-3 shadow-sm",
+          "md:max-w-[70%] sm:max-w-[95%] break-words rounded-2xl px-4 py-3 shadow-sm",
           isUser
             ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-br-md"
             : "bg-white border border-pink-100 text-gray-800 rounded-bl-md"
@@ -81,7 +81,7 @@ export const ChatBubble = ({ message }: ChatBubbleProps) => {
             className="w-full max-w-full sm:max-w-sm rounded-lg mb-2"
           />
         )}
-        <p className="text-sm leading-relaxed break-words break-all whitespace-pre-wrap">
+        <p className="text-sm leading-relaxed break-words whitespace-pre-wrap">
           {message.text}
         </p>
         <div

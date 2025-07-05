@@ -8,10 +8,10 @@ interface QuickPromptsProps {
 
 const prompts = [
   "How are you feeling today?",
-  "I miss you so much",
-  "Tell me something romantic",
+  // "I miss you so much",
+  // "Tell me something romantic",
   "What should I text my partner?",
-  "I'm feeling lonely",
+  // "I'm feeling lonely",
   "Help me plan a surprise",
 ];
 

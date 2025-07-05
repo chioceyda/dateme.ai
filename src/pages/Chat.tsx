@@ -190,41 +190,46 @@ const Chat = () => {
         )}
 
         {/* Message Input */}
-        <div className="border-t border-pink-100 dark:border-gray-700 bg-white dark:bg-gray-800">
-          <div className="p-4">
-            <div className="flex items-end space-x-2">
+        <div className="fixed bottom-0 left-0 w-full px-4 pb-4 bg-white dark:bg-gray-900 z-40">
+          <div className="max-w-4xl mx-auto rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 transition-shadow p-2">
+            <div className="flex items-end gap-2 px-2">
+              {/* Attachment Button */}
               <Button
                 variant="ghost"
-                size="sm"
+                size="icon"
                 onClick={() => setShowImageUploader(!showImageUploader)}
                 className="text-pink-500 hover:text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-900/20"
               >
-                <Paperclip className="w-4 h-4" />
+                <Paperclip className="w-5 h-5" />
               </Button>
 
-              <div className="flex-1">
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <QuickPrompts onPromptSelect={handlePromptSelect} />
-                </div>
+              {/* Input Area */}
+              <div className="flex-1 flex flex-col gap-1">
+                <QuickPrompts onPromptSelect={(prompt) => setMessage(prompt)} />
                 <Textarea
                   ref={textareaRef}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage();
+                    }
+                  }}
                   placeholder="Type your message..."
-                  className="resize-none 
-                  border-none focus:ring-0 focus:outline-none bg-transparent
-                  border-pink-200 focus:border-pink-400 focus:ring-pink-400 dark:bg-gray-700  dark:text-white"
+                  className="resize-none border-none focus:ring-0 focus:outline-none bg-transparent dark:bg-gray-700 dark:text-white px-3 py-2"
                   rows={1}
                 />
               </div>
 
+              {/* Send Button */}
               <Button
                 onClick={handleSendMessage}
-                disabled={!message.trim() && !selectedImage}
-                className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600"
+                disabled={!message.trim()}
+                className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white"
+                size="icon"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-5 h-5" />
               </Button>
             </div>
           </div>
