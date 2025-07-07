@@ -12,6 +12,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Send, Paperclip } from "lucide-react";
 import { OpenAIService } from "@/utils/openai";
 import { conversationService } from "@/services/conversationService";
+import { useLocation, useNavigate } from "react-router-dom";
+import { supabase } from "@/lib/supabase";
 
 const Chat = () => {
   const state = useSnapshot(chatState);
@@ -23,6 +25,8 @@ const Chat = () => {
   >(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // Use mock service for demo (replace with real API key)
   // const aiService = new MockOpenAIService();
@@ -38,6 +42,27 @@ const Chat = () => {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  // Chat.tsx currently does parse the access token from the URL when Google redirects users after login.
+
+  useEffect(() => {
+    const hash = location.hash;
+    if (hash.includes("access_token")) {
+      const params = new URLSearchParams(hash.slice(1));
+
+      const access_token = params.get("access_token");
+      const refresh_token = params.get("refresh_token");
+
+      if (access_token && refresh_token) {
+        supabase.auth
+          .setSession({ access_token, refresh_token })
+          .then(() => {
+            navigate("/chat", { replace: true });
+          })
+          .catch((err) => console.error("Session setup failed", err));
+      }
+    }
+  }, [location, navigate]);
 
   useEffect(() => {
     scrollToBottom();
