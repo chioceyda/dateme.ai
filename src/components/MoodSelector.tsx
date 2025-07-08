@@ -26,15 +26,17 @@ export const MoodSelector = ({
 }: MoodSelectorProps) => {
   return (
     <div className="flex items-center space-x-2">
-      <span className="text-sm text-gray-600 font-medium">Mood:</span>
+      <span className="text-sm text-gray-600 dark:text-white font-medium">
+        Mood:
+      </span>
       <Select
         value={currentMood}
         onValueChange={(value) => onMoodChange(value as ChatMood)}
       >
-        <SelectTrigger className="w-32 h-8 text-sm bg-white dark:text-pink-300 ">
+        <SelectTrigger className="w-32 h-8 text-sm bg-white dark:text-pink-300 dark:bg-gray-900 ">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent className="bg-white dark:text-pink-300 ">
+        <SelectContent className="bg-white dark:text-pink-300 dark:bg-gray-900  ">
           {Object.entries(moodEmojis).map(([mood, emoji]) => (
             <SelectItem
               key={mood}
