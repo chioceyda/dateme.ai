@@ -38,7 +38,7 @@ const Index = () => {
       {/* Header */}
       <header className="container mx-auto px-2 py-3 sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-sm transition-colors">
         <nav className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <div className="w-20 ml-2 h-8 flex items-center justify-center">
               <img
                 src={logoT}
